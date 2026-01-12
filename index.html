@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AM Boys Walking League - Leaderboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">🏌️‍♂️ AM Boys Walking League</h1>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Leaderboard</a></li>
+                <li><a href="schedule.html">Schedule</a></li>
+                <li><a href="rules.html">Rules</a></li>
+                <li><a href="members.html">Members</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <h2>2025 Season Leaderboard</h2>
+            <p class="season-info">13-Week League • Championship Weekend Aug 2-3</p>
+        </section>
+
+        <div class="stats-banner">
+            <div class="stat-card">
+                <span class="stat-label">Total Birdies</span>
+                <span class="stat-value" id="total-birdies">-</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Birdie King</span>
+                <span class="stat-value" id="birdie-king">-</span>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">Loading leaderboard data...</div>
+        <div class="error" id="error" style="display: none;"></div>
+
+        <div id="leaderboard-container">
+            <!-- Groups will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AM Boys Walking League</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
