@@ -37,35 +37,48 @@ function parseCSV(csv) {
 // Extract leaderboard data from parsed CSV
 function extractLeaderboardData(rows) {
     const groups = { A: [], B: [], C: [], D: [] };
-    let currentGroup = null;
+    let currentGroupIndex = -1;
+    const groupLetters = ['A', 'B', 'C', 'D'];
     let totalBirdies = 0;
     let birdieKing = '';
     
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         
-        // Detect group headers (looking for "Rank" in first columns)
-        if (row[2] === 'Rank' || row[1] === 'Rank') {
-            // Next rows will be members of a group
-            const groupLetter = String.fromCharCode(65 + Object.keys(groups).filter(k => groups[k].length > 0).length);
-            currentGroup = groupLetter;
+        // Look for birdie stats first
+        if (row.join(',').includes('Total Birdies:')) {
+            for (let j = 0; j < row.length; j++) {
+                if (row[j] === 'Total Birdies:' && row[j + 2]) {
+                    totalBirdies = parseInt(row[j + 2]) || 0;
+                }
+                if (row[j] === 'Birdie King:' && row[j + 3]) {
+                    birdieKing = row[j + 3];
+                }
+            }
+        }
+        
+        // Detect group headers (looking for "Rank" in column 1)
+        if (row[1] && row[1].toLowerCase().includes('rank')) {
+            currentGroupIndex++;
             continue;
         }
         
-        // Extract player data (rank, name, total points, weekly scores)
-        if (currentGroup && row[2] && !isNaN(row[1]) && row[3]) {
+        // Extract player data - format is: [empty, rank, name, total, week1, week2, ...]
+        // Only process if we're in a valid group section
+        if (currentGroupIndex >= 0 && currentGroupIndex < 4) {
             const rank = parseInt(row[1]);
             const name = row[2];
             const total = parseFloat(row[3]);
             
-            // Get weekly scores (columns 4 onwards)
-            const weeklyScores = [];
-            for (let j = 4; j < Math.min(row.length, 16); j++) {
-                weeklyScores.push(row[j] || '-');
-            }
-            
-            if (name && !isNaN(total)) {
-                groups[currentGroup].push({
+            // Valid player row must have rank (1-4), name, and total
+            if (!isNaN(rank) && rank >= 1 && rank <= 4 && name && !isNaN(total)) {
+                // Get weekly scores (columns 4 onwards)
+                const weeklyScores = [];
+                for (let j = 4; j < Math.min(row.length, 16); j++) {
+                    weeklyScores.push(row[j] || '-');
+                }
+                
+                groups[groupLetters[currentGroupIndex]].push({
                     rank,
                     name,
                     total,
@@ -74,24 +87,9 @@ function extractLeaderboardData(rows) {
             }
         }
         
-        // Look for weekly winners
-        if (row[2] === 'Weekly Low:' || row[3] === 'Weekly Low:') {
-            // This row contains weekly winners
-        }
-        
-        // Look for birdie stats
-        if (row.join(',').includes('Total Birdies:')) {
-            const birdieIndex = row.indexOf('Total Birdies:');
-            if (birdieIndex >= 0 && row[birdieIndex + 1]) {
-                totalBirdies = parseInt(row[birdieIndex + 1]) || 0;
-            }
-        }
-        
-        if (row.join(',').includes('Birdie King:')) {
-            const kingIndex = row.indexOf('Birdie King:');
-            if (kingIndex >= 0 && row[kingIndex + 1]) {
-                birdieKing = row[kingIndex + 1];
-            }
+        // Stop processing after we've found all 4 groups and hit an empty row pattern
+        if (currentGroupIndex >= 4 && row.every(cell => !cell || cell === '')) {
+            break;
         }
     }
     
