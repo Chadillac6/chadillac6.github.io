@@ -148,7 +148,151 @@ body {
     border: 1px solid #fcc;
 }
 
-/* Leaderboard */
+/* Masters-Style Leaderboard */
+.masters-leaderboard {
+    background-color: var(--bg-white);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin: 2rem 0;
+    overflow-x: auto;
+}
+
+.masters-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.masters-table thead {
+    background-color: var(--primary-green);
+    color: white;
+}
+
+.masters-table thead tr {
+    border-bottom: 3px solid var(--light-green);
+}
+
+.masters-table th {
+    padding: 1rem 0.75rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.masters-table .rank-col {
+    width: 60px;
+    text-align: center;
+}
+
+.masters-table .player-col {
+    text-align: left;
+    min-width: 180px;
+    padding-left: 1.5rem !important;
+}
+
+.masters-table .week-col {
+    width: 50px;
+    text-align: center;
+}
+
+.masters-table .total-col {
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.masters-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.masters-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.masters-table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.masters-table tbody tr:nth-child(even):hover {
+    background-color: #f5f5f5;
+}
+
+.masters-table tbody td {
+    padding: 0.875rem 0.75rem;
+}
+
+.rank-number {
+    display: inline-block;
+    min-width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    color: var(--text-dark);
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.rank-number.first {
+    background-color: var(--accent-gold);
+    color: white;
+}
+
+.rank-number.second {
+    background-color: #c0c0c0;
+    color: white;
+}
+
+.rank-number.third {
+    background-color: #cd7f32;
+    color: white;
+}
+
+.player-name {
+    display: block;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.player-group {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.player-group.group-a { color: var(--group-a); }
+.player-group.group-b { color: var(--group-b); }
+.player-group.group-c { color: var(--group-c); }
+.player-group.group-d { color: var(--group-d); }
+
+.week-col {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.score-positive {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.total-col {
+    font-size: 1.15rem;
+    font-weight: bold;
+}
+
+.total-col.score-red {
+    color: #dc2626;
+}
+
+/* Legacy leaderboard styles (kept for compatibility) */
 .group-leaderboard {
     background-color: var(--bg-white);
     border-radius: 10px;
@@ -157,97 +301,9 @@ body {
     overflow: hidden;
 }
 
-.group-leaderboard-header {
-    padding: 1rem 1.5rem;
-    color: white;
-    font-size: 1.25rem;
-    font-weight: bold;
-}
-
-.group-leaderboard-header.group-a { background-color: var(--group-a); }
-.group-leaderboard-header.group-b { background-color: var(--group-b); }
-.group-leaderboard-header.group-c { background-color: var(--group-c); }
-.group-leaderboard-header.group-d { background-color: var(--group-d); }
-
 .leaderboard-table {
     width: 100%;
     border-collapse: collapse;
-}
-
-.leaderboard-table thead {
-    background-color: var(--bg-light);
-}
-
-.leaderboard-table th,
-.leaderboard-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.leaderboard-table th {
-    font-weight: 600;
-    color: var(--text-gray);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-
-.leaderboard-table tbody tr:hover {
-    background-color: var(--bg-light);
-}
-
-.rank {
-    width: 60px;
-    font-weight: bold;
-    color: var(--primary-green);
-}
-
-.rank-badge {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    border-radius: 50%;
-    background-color: var(--primary-green);
-    color: white;
-    font-size: 0.9rem;
-}
-
-.rank-badge.first {
-    background-color: var(--accent-gold);
-}
-
-.rank-badge.second {
-    background-color: #c0c0c0;
-}
-
-.rank-badge.third {
-    background-color: #cd7f32;
-}
-
-.player-name {
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-.total-points {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: var(--primary-green);
-}
-
-.weekly-low {
-    margin-top: 1rem;
-    padding: 1rem 1.5rem;
-    background-color: #fffbeb;
-    border-top: 2px solid var(--accent-gold);
-    font-size: 0.9rem;
-    color: var(--text-gray);
-}
-
-.weekly-low strong {
-    color: var(--text-dark);
 }
 
 /* Rules Page */
