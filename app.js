@@ -38,11 +38,9 @@ function parseCSV(csv) {
 function extractLeaderboardData(rows) {
     const players = [];
     const groupLetters = ['A', 'B', 'C', 'D'];
-    let currentGroupIndex = -1;
     let totalBirdies = 0;
     let birdieKing = '';
-    
-    console.log('Total rows:', rows.length);
+    let playerCount = 0;
     
     // Get week headers from row 1 (columns 4 onwards)
     const weekHeaders = [];
@@ -53,8 +51,6 @@ function extractLeaderboardData(rows) {
             }
         }
     }
-    
-    console.log('Week headers:', weekHeaders);
     
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
@@ -71,24 +67,18 @@ function extractLeaderboardData(rows) {
             }
         }
         
-        // Detect group headers (looking for "Rank" in column 1)
-        const cell1Lower = row[1] ? row[1].toString().toLowerCase().trim() : '';
-        if (cell1Lower === 'rank' || cell1Lower.includes('rank')) {
-            currentGroupIndex++;
-            console.log(`Found group header at row ${i}, group index: ${currentGroupIndex}, cell value: "${row[1]}"`);
-            continue;
-        }
+        // Extract player data - look for rows with rank (1-4) in column 1, name in column 2, total in column 3
+        const rank = parseInt(row[1]);
+        const name = row[2];
+        const total = parseFloat(row[3]);
         
-        // Extract player data from rows 4-23 (4 groups x 4 players + group headers)
-        if (currentGroupIndex >= 0 && currentGroupIndex < 4) {
-            const rank = parseInt(row[1]);
-            const name = row[2];
-            const total = parseFloat(row[3]);
+        // Valid player row: has numeric rank 1-4, has a name, has a total score
+        if (!isNaN(rank) && rank >= 1 && rank <= 4 && name && name.trim() !== '' && !isNaN(total)) {
+            // Determine which group based on player count (first 4 = A, next 4 = B, etc.)
+            const groupIndex = Math.floor(playerCount / 4);
             
-            console.log(`Row ${i}: rank=${rank}, name=${name}, total=${total}, group=${currentGroupIndex}`);
-            
-            // Valid player row must have rank (1-4), name, and total
-            if (!isNaN(rank) && rank >= 1 && rank <= 4 && name && name.trim() !== '' && !isNaN(total)) {
+            // Only process first 16 players (4 groups x 4 players)
+            if (groupIndex < 4) {
                 // Get weekly scores (columns 4 onwards)
                 const weeklyScores = [];
                 for (let j = 4; j < 16; j++) {
@@ -96,24 +86,22 @@ function extractLeaderboardData(rows) {
                     weeklyScores.push(score);
                 }
                 
-                console.log(`Adding player: ${name}, group: ${groupLetters[currentGroupIndex]}`);
-                
                 players.push({
                     name,
-                    group: groupLetters[currentGroupIndex],
+                    group: groupLetters[groupIndex],
                     total,
                     weeklyScores
                 });
+                
+                playerCount++;
             }
         }
         
-        // Stop processing after we've found all 4 groups
-        if (currentGroupIndex >= 4 && row.every(cell => !cell || cell === '')) {
+        // Stop after collecting 16 players
+        if (playerCount >= 16) {
             break;
         }
     }
-    
-    console.log('Total players extracted:', players.length);
     
     // Sort players by total points (descending)
     players.sort((a, b) => b.total - a.total);
