@@ -42,6 +42,8 @@ function extractLeaderboardData(rows) {
     let totalBirdies = 0;
     let birdieKing = '';
     
+    console.log('Total rows:', rows.length);
+    
     // Get week headers from row 1 (columns 4 onwards)
     const weekHeaders = [];
     if (rows.length > 1) {
@@ -51,6 +53,8 @@ function extractLeaderboardData(rows) {
             }
         }
     }
+    
+    console.log('Week headers:', weekHeaders);
     
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
@@ -68,8 +72,10 @@ function extractLeaderboardData(rows) {
         }
         
         // Detect group headers (looking for "Rank" in column 1)
-        if (row[1] && row[1].toLowerCase().includes('rank')) {
+        const cell1Lower = row[1] ? row[1].toString().toLowerCase().trim() : '';
+        if (cell1Lower === 'rank' || cell1Lower.includes('rank')) {
             currentGroupIndex++;
+            console.log(`Found group header at row ${i}, group index: ${currentGroupIndex}, cell value: "${row[1]}"`);
             continue;
         }
         
@@ -79,14 +85,18 @@ function extractLeaderboardData(rows) {
             const name = row[2];
             const total = parseFloat(row[3]);
             
+            console.log(`Row ${i}: rank=${rank}, name=${name}, total=${total}, group=${currentGroupIndex}`);
+            
             // Valid player row must have rank (1-4), name, and total
-            if (!isNaN(rank) && rank >= 1 && rank <= 4 && name && !isNaN(total)) {
+            if (!isNaN(rank) && rank >= 1 && rank <= 4 && name && name.trim() !== '' && !isNaN(total)) {
                 // Get weekly scores (columns 4 onwards)
                 const weeklyScores = [];
                 for (let j = 4; j < 16; j++) {
                     const score = row[j] || '0';
                     weeklyScores.push(score);
                 }
+                
+                console.log(`Adding player: ${name}, group: ${groupLetters[currentGroupIndex]}`);
                 
                 players.push({
                     name,
@@ -102,6 +112,8 @@ function extractLeaderboardData(rows) {
             break;
         }
     }
+    
+    console.log('Total players extracted:', players.length);
     
     // Sort players by total points (descending)
     players.sort((a, b) => b.total - a.total);
